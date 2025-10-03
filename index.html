@@ -54,7 +54,7 @@
 const words = [
 {word:"a",meaning:"一個"},{word:"about",meaning:"關於"},{word:"after",meaning:"之後"},{word:"all",meaning:"全部"},
 {word:"am",meaning:"是(第一人稱)"},{word:"an",meaning:"一個"},{word:"and",meaning:"和"},{word:"any",meaning:"任何"},
-{word:"are",meaning:"是(複數)"},{word:"as",meaning:"像"},{word:"at",meaning:"在"},{word:"be",meaning:"是"},
+{word:"are",meaning:"是(複數)"},{word:"as",meaning:"像"},{word:"at",meaning:"在…裡"},{word:"be",meaning:"是"},
 {word:"because",meaning:"因為"},{word:"been",meaning:"曾經"},{word:"before",meaning:"在…之前"},{word:"big",meaning:"大"},
 {word:"but",meaning:"但是"},{word:"by",meaning:"被"},{word:"call",meaning:"叫"},{word:"came",meaning:"來(過去式)"},
 {word:"can",meaning:"能夠"},{word:"come",meaning:"來"},{word:"could",meaning:"可以(過去或可能)"},{word:"day",meaning:"天"},
@@ -149,8 +149,12 @@ function showQuestion() {
 function selectOption(btn) {
     if (isPaused) return;
     const selected = btn.textContent;
-    // 顯示藍底效果
-    Array.from(document.querySelectorAll(".options button")).forEach(b => b.style.backgroundColor = "#f0f0f0");
+    // 所有按鈕還原顏色
+    Array.from(document.querySelectorAll(".options button")).forEach(b => {
+        b.style.backgroundColor = "#f0f0f0";
+        b.style.color = "#000";
+    });
+    // 點選按鈕變藍
     btn.style.backgroundColor = "#3399ff";
     btn.style.color = "#fff";
 
@@ -167,7 +171,7 @@ function selectOption(btn) {
         showFeedback(false, currentWord.word);
     }
     document.getElementById("score").textContent = score;
-    setTimeout(nextQuestion, 1000); // 1秒後自動跳下一題
+    setTimeout(nextQuestion, 1000);
 }
 
 // 顯示答題結果
@@ -177,4 +181,36 @@ function showFeedback(isCorrect, correctWord) {
         feedback.textContent = "答對了!";
         feedback.className = "correct";
     } else {
-        feedback.textContent = `答錯了! 正確答案是 "${correctWord
+        feedback.textContent = `答錯了! 正確答案是 "${correctWord}"`;
+        feedback.className = "wrong";
+    }
+}
+
+function nextQuestion() {
+    showQuestion();
+}
+
+// 暫停或繼續遊戲
+document.getElementById("pauseBtn").onclick = function() {
+    isPaused = !isPaused;
+    this.textContent = isPaused ? "繼續遊戲" : "暫停遊戲";
+};
+
+// 重新開始遊戲
+document.getElementById("restartBtn").onclick = function() {
+    clearInterval(timerInterval);
+    score = 0;
+    questionCount = 0;
+    isPaused = false;
+    document.getElementById("score").textContent = score;
+    document.getElementById("questionCount").textContent = questionCount;
+    document.getElementById("pauseBtn").textContent = "暫停遊戲";
+    showQuestion();
+};
+
+// 開始遊戲
+showQuestion();
+</script>
+
+</body>
+</html>
