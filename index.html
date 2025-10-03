@@ -7,12 +7,27 @@
 <style>
     body { font-family: Arial, sans-serif; background: #fff8dc; padding: 20px; }
     h1 { text-align: center; color: #333; }
-    .question { font-size: 24px; margin-bottom: 15px; text-align: center; }
-    .options button { display: block; margin: 8px auto; padding: 10px 20px; font-size: 18px; cursor: pointer; width: 50%; }
+    .question { font-size: 28px; margin-bottom: 20px; text-align: center; }
+    .options button {
+        display: block;
+        margin: 10px auto;
+        padding: 15px 25px;
+        font-size: 22px;
+        cursor: pointer;
+        width: 60%;
+        border: 2px solid #333;
+        border-radius: 10px;
+        background-color: #f0f0f0;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .options button:active {
+        background-color: #3399ff;
+        color: #fff;
+    }
     .info { margin-top: 20px; font-size: 18px; text-align: center; }
     .timer { font-weight: bold; color: red; }
     .controls button { margin: 5px; padding: 5px 15px; font-size: 16px; }
-    #feedback { margin-top: 10px; font-size: 20px; font-weight: bold; text-align: center; height: 30px; }
+    #feedback { margin-top: 15px; font-size: 22px; font-weight: bold; text-align: center; height: 30px; }
     .correct { color: green; }
     .wrong { color: red; }
 </style>
@@ -110,7 +125,7 @@ function showQuestion() {
             if (timer <= 0) {
                 clearInterval(timerInterval);
                 showFeedback(false, currentWord.word);
-                nextQuestion();
+                setTimeout(nextQuestion, 1000);
             }
         }
     }, 1000);
@@ -123,28 +138,22 @@ function showQuestion() {
     options.forEach(option => {
         const btn = document.createElement("button");
         btn.textContent = option;
-        btn.onclick = () => checkAnswer(option);
+        btn.onclick = () => selectOption(btn);
         optionsDiv.appendChild(btn);
     });
     questionCount++;
     document.getElementById("questionCount").textContent = questionCount;
 }
 
-// 顯示答題結果
-function showFeedback(isCorrect, correctWord) {
-    const feedback = document.getElementById("feedback");
-    if (isCorrect) {
-        feedback.textContent = "答對了!";
-        feedback.className = "correct";
-    } else {
-        feedback.textContent = `答錯了! 正確答案是 "${correctWord}"`;
-        feedback.className = "wrong";
-    }
-}
-
-// 檢查答案
-function checkAnswer(selected) {
+// 點選選項
+function selectOption(btn) {
     if (isPaused) return;
+    const selected = btn.textContent;
+    // 顯示藍底效果
+    Array.from(document.querySelectorAll(".options button")).forEach(b => b.style.backgroundColor = "#f0f0f0");
+    btn.style.backgroundColor = "#3399ff";
+    btn.style.color = "#fff";
+
     clearInterval(timerInterval);
     if (selected === currentWord.word) {
         score++;
@@ -161,31 +170,11 @@ function checkAnswer(selected) {
     setTimeout(nextQuestion, 1000); // 1秒後自動跳下一題
 }
 
-function nextQuestion() {
-    showQuestion();
-}
-
-// 暫停或繼續遊戲
-document.getElementById("pauseBtn").onclick = function() {
-    isPaused = !isPaused;
-    this.textContent = isPaused ? "繼續遊戲" : "暫停遊戲";
-};
-
-// 重新開始遊戲
-document.getElementById("restartBtn").onclick = function() {
-    clearInterval(timerInterval);
-    score = 0;
-    questionCount = 0;
-    isPaused = false;
-    document.getElementById("score").textContent = score;
-    document.getElementById("questionCount").textContent = questionCount;
-    document.getElementById("pauseBtn").textContent = "暫停遊戲";
-    showQuestion();
-};
-
-// 開始遊戲
-showQuestion();
-</script>
-
-</body>
-</html>
+// 顯示答題結果
+function showFeedback(isCorrect, correctWord) {
+    const feedback = document.getElementById("feedback");
+    if (isCorrect) {
+        feedback.textContent = "答對了!";
+        feedback.className = "correct";
+    } else {
+        feedback.textContent = `答錯了! 正確答案是 "${correctWord
